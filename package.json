@@ -1,0 +1,23 @@
+{
+  "name": "pyramid-learning-journal",
+  "version": "1.0.0",
+  "description": "Python 401 Learning Journal",
+  "main": "index.js",
+  "dependencies": {
+    "startbootstrap-clean-blog": "^4.0.0-beta"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/philipwerner/pyramid-learning-journal.git"
+  },
+  "author": "phil werner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/philipwerner/pyramid-learning-journal/issues"
+  },
+  "homepage": "https://github.com/philipwerner/pyramid-learning-journal#readme"
+}
