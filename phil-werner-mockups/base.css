@@ -23,6 +23,11 @@ h6 {
   font-weight: 800;
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 
+  h1 {
+     -webkit-text-stroke-width: 1px;
+     -webkit-text-stroke-color: black;
+  }
+
 a {
   color: #333333;
   -webkit-transition: all 0.2s;
@@ -33,6 +38,40 @@ a {
 
 a img:focus, a img:hover {
   cursor: zoom-in; }
+
+  label {
+    font-size: 3em;
+  }
+
+  input {
+    width: 100%;
+    margin: .5em 0;
+    border: 1px solid #ccc;
+    border-width: 0 0 1px 0;
+    border-radius: 0;
+  }
+
+  input[type="checkbox"] {
+    width: .28em;
+    height: .28em;
+    font-size: 3em;
+  }
+
+  textarea {
+    width: 100%;
+    margin: .5em 0;
+    font-size: 2em;
+    border: 1px solid #ccc;
+    border-radius: 0;
+  }
+
+  input:invalid, textarea:invalid {
+    border-color: #AE3F3C;
+  }
+
+  input:valid, textarea:valid {
+    border-color: #89CB8E;
+  }
 
 blockquote {
   font-style: italic;
