@@ -4,6 +4,9 @@
   "description": "Python 401 Learning Journal",
   "main": "index.js",
   "dependencies": {
+    "bootstrap": "^4.0.0-beta.2",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.2.1",
     "startbootstrap-clean-blog": "^4.0.0-beta"
   },
   "devDependencies": {},
