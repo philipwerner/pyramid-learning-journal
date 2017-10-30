@@ -1,3 +1,4 @@
+"""."""
 import os
 
 from setuptools import setup, find_packages
@@ -15,6 +16,8 @@ requires = [
     'pyramid_jinja2',
     'pyramid_retry',
     'pyramid_tm',
+    'ipython',
+    'pyramid_ipython',
     'SQLAlchemy',
     'transaction',
     'zope.sqlalchemy',
@@ -25,6 +28,7 @@ tests_require = [
     'WebTest >= 1.3.1',  # py3 compat
     'pytest',
     'pytest-cov',
+    'tox',
 ]
 
 setup(
