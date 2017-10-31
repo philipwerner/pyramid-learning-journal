@@ -5,21 +5,21 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Learning Journal for Python 401">
+    <meta name="author" content="Philip Werner">
 
-    <title>Phil Werner - New Entry</title>
+    <title>Philip Werner - Home</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="pyramid_scaffold/pyramid_scaffold/static/base.cssbootstrap.min.css" rel="stylesheet">
+    <link href="static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom fonts for this template -->
-    <link href="phil-werner-mockups/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
 
     <!-- Custom styles for this template -->
-    <link href="pyramid_scaffold/pyramid_scaffold/static/base.css" rel="stylesheet">
+    <link href="static/base.css" rel="stylesheet">
 
   </head>
 
@@ -28,7 +28,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
       <div class="container">
-        <a class="navbar-brand" href="index.html">PW</a>
+        <a class="navbar-brand" href="templates/index.html">PW</a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           Menu
           <i class="fa fa-bars"></i>
@@ -36,16 +36,16 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-              <a class="nav-link" href="index.html">Home</a>
+              <a class="nav-link" href="templates/index.html">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="post.html">View</a>
+              <a class="nav-link" href="templates/detail.html">View</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="new.html">New Entry</a>
+              <a class="nav-link" href="templates/new.html">New Entry</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="edit.html">Edit</a>
+              <a class="nav-link" href="templates/edit.html">Edit</a>
             </li>
           </ul>
         </div>
@@ -53,12 +53,12 @@
     </nav>
 
     <!-- Page Header -->
-    <header class="masthead" style="background-image: url('img/seatown.jpg')">
+    <header class="masthead" style="background-image: url('static/img/seatown.jpg')">
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
             <div class="site-heading">
-              <h1>New Entry</h1>
+              <h1>Phil's Blog</h1>
               <span class="subheading"></span>
             </div>
           </div>
@@ -70,29 +70,24 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-          <main class="clearfix">
-            <section id="write" class="tab-content">
-              <h1>New Article</h1>
-              <form action="#" id="new-form">
-                <label>
-                <input type="text" id="article-title" placeholder="Article title" required>
-                </label>
-                <textarea id="article-body" rows="8" cols="40" required></textarea>
-                <label>
-                  <input type="text" id="article-author" placeholder="Author Name" required>
-                </label>
-                <label>
-                  <input type="text" id="article-author-url" placeholder="Author's URL" required>
-                </label>
-                <label>
-                  <input type="text" id="article-category" placeholder="Category" required>
-                </label>
-                <button type="submit">Submit</button>
-              </form>
-            </section>
-            <section id="articles" class="tab-content">
-            </section>
-          </main>
+          <div class="post-preview">
+            <a href="post.html">
+              <h2 class="post-title">
+                Pyhton 401 Day 11 LJ
+              </h2>
+              <h3 class="post-subtitle">
+                So in the last couple days, I’ve learned that bootstraps are awesome when you don’t like dealing with CSS. The pyramid scaffold is pretty great, I’m sure it gets better the more you use it and start to know exactly what you have to do without reading through instructions for initial setup. Also the data structures are starting to make way more sense the further we get into them.
+              </h3>
+            </a>
+            <p class="post-meta">Posted by
+              <a href="#">Phil Werner</a>
+              on October 31, 2017</p>
+          </div>
+
+          <!-- Pager -->
+          <div class="clearfix">
+            <a class="btn btn-secondary float-right" href="#">Older Posts &rarr;</a>
+          </div>
         </div>
       </div>
     </div>
@@ -137,11 +132,12 @@
     </footer>
 
     <!-- Bootstrap core JavaScript -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="static/vendor/jquery/jquery.min.js"></script>
+    <script src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Custom scripts for this template -->
-    <script src="app.js"></script>
+    <script src="static/js/app.js"></script>
+    <script src="static/js/clean-blog.min.js"></script>
 
   </body>
 
