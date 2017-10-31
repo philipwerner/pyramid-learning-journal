@@ -1,65 +1,91 @@
-import unittest
-import transaction
-
+from pyramid.testing import DummyRequest
 from pyramid import testing
+from pyramid.response import Response
 
 
-def dummy_request(dbsession):
-    return testing.DummyRequest(dbsession=dbsession)
+def test_list_view_returns_response_object():
+    """."""
+    from pyramid_scaffold.views import list_view
+    req = DummyRequest()
+    response = list_view(req)
+    assert isinstance(response, Response)
 
 
-class BaseTest(unittest.TestCase):
-    def setUp(self):
-        self.config = testing.setUp(settings={
-            'sqlalchemy.url': 'sqlite:///:memory:'
-        })
-        self.config.include('.models')
-        settings = self.config.get_settings()
-
-        from .models import (
-            get_engine,
-            get_session_factory,
-            get_tm_session,
-            )
-
-        self.engine = get_engine(settings)
-        session_factory = get_session_factory(self.engine)
-
-        self.session = get_tm_session(session_factory, transaction.manager)
-
-    def init_database(self):
-        from .models.meta import Base
-        Base.metadata.create_all(self.engine)
-
-    def tearDown(self):
-        from .models.meta import Base
-
-        testing.tearDown()
-        transaction.abort()
-        Base.metadata.drop_all(self.engine)
+def test_list_view_returns_status_200():
+    from pyramid_scaffold.views import list_view
+    req = DummyRequest()
+    response = list_view(req)
+    assert response.status_code == 200
 
 
-class TestMyViewSuccessCondition(BaseTest):
-
-    def setUp(self):
-        super(TestMyViewSuccessCondition, self).setUp()
-        self.init_database()
-
-        from .models import MyModel
-
-        model = MyModel(name='one', value=55)
-        self.session.add(model)
-
-    def test_passing_view(self):
-        from .views.default import my_view
-        info = my_view(dummy_request(self.session))
-        self.assertEqual(info['one'].name, 'one')
-        self.assertEqual(info['project'], 'Pyramid Scaffold')
+def test_list_view_content_is_correct():
+    from pyramid_scaffold.views import list_view
+    req = DummyRequest()
+    response = list_view(req)
+    assert "Phil's Blog" in response.text
 
 
-class TestMyViewFailureCondition(BaseTest):
+def test_detail_view_returns_response_object():
+    """."""
+    from pyramid_scaffold.views import detail_view
+    req = DummyRequest()
+    response = detail_view(req)
+    assert isinstance(response, Response)
 
-    def test_failing_view(self):
-        from .views.default import my_view
-        info = my_view(dummy_request(self.session))
-        self.assertEqual(info.status_int, 500)
+
+def test_detail_view_returns_status_200():
+    from pyramid_scaffold.views import detail_view
+    req = DummyRequest()
+    response = detail_view(req)
+    assert response.status_code == 200
+
+
+def test_detail_view_content_is_correct():
+    from pyramid_scaffold.views import list_view
+    req = DummyRequest()
+    response = detail_view(req)
+    assert "Man must explore, and this is exploration at its greatest" in response.text
+
+
+def test_create_view_returns_response_object():
+    """."""
+    from pyramid_scaffold.views import create_view
+    req = DummyRequest()
+    response = create_view(req)
+    assert isinstance(response, Response)
+
+
+def test_create_view_returns_status_200():
+    from pyramid_scaffold.views import create_view
+    req = DummyRequest()
+    response = create_view(req)
+    assert response.status_code == 200
+
+
+def test_create_view_content_is_correct():
+    from pyramid_scaffold.views import create_view
+    req = DummyRequest()
+    response = create_view(req)
+    assert "New Article" in response.text
+
+
+def test_update_view_returns_response_object():
+    """."""
+    from pyramid_scaffold.views import update_view
+    req = DummyRequest()
+    response = update_view(req)
+    assert isinstance(response, Response)
+
+
+def test_update_view_returns_status_200():
+    from pyramid_scaffold.views import update_view
+    req = DummyRequest()
+    response = update_view(req)
+    assert response.status_code == 200
+
+
+def test_update_view_content_is_correct():
+    from pyramid_scaffold.views import update_view
+    req = DummyRequest()
+    response = update_view(req)
+    assert "Edit Entry" in response.text
