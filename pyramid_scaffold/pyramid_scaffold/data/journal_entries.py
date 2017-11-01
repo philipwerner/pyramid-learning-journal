@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Handles formatting inputs for jinja pages."""
-from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPNotFound
-
 POSTS = [
     {'id': 2, 'entry_title': 'Day 2', 'body': "I feel a lot better after today, very relieved that I was able to get everything I missed yesterday. It was also very nice to get my Sublime set up properly and the virtualenv running and know how to use them. Much better day today. The assignment was fun, pretty straight forward, really happy to be focusing on writing tests, all my dev friends tell me that they are a big part of getting a job, so.....YESS!", 'creation_date': 'Tuesday, 17 October, 2017, 10:23 pm'},
     {'id': 3, 'entry_title': 'Day 3', 'body': "So far so good, my head isn't spinning yet. Everything is making so much more sense than JS and that makes me happy. The complexity of using the terminal/command line is a bit intimidating, but I haven't really had any hangups at this point. Really excited about all of this.", 'creation_date': 'Thursday, 19 October, 2017, 4:11 pm'},
@@ -15,40 +10,3 @@ POSTS = [
     {'id': 10, 'entry_title': 'Day 10', 'body': "The code review today was really awesome. It has been great seeing people refactor code during these, it helps me to get a better understanding of the problems. The best part of code review was going over the tests. I am starting to feel a lot more comfortable with writing tests. The whole concept of writing tests before writing the code made my head hurt at first, but it is all making sense now.", 'creation_date': 'Friday, 27 October, 2017, 7:06 pm'},
     {'id': 11, 'entry_title': 'Day 11', 'body': "So in the last couple days, I’ve learned that bootstraps are awesome when you don’t like dealing with CSS. The pyramid scaffold is pretty great, I’m sure it gets better the more you use it and start to know exactly what you have to do without reading through instructions for initial setup. Also the data structures are starting to make way more sense the further we get into them.", 'creation_date': 'Tuesday, 31 October, 2017, 8:10 am'}
 ]
-
-
-@view_config(route_name='list', renderer="pyramid_scaffold:templates/home.jinja2")
-def list_journal(request):
-    """Will handle the request for the home page."""
-    return {
-        'entries': POSTS
-    }
-
-
-@view_config(route_name='detail', renderer="pyramid_scaffold:templates/detail.jinja2")
-def detailed_journal(request):
-    """Will handle the request for detailed entries."""
-    post_id = int(request.matchdict['id'])
-    if post_id < 0 or post_id > len(POSTS) - 1:
-        raise HTTPNotFound
-    entry = list(filter(lambda entry: entry['id'] == post_id, POSTS))[0]
-    return {
-        'title': entry_title,
-        'entry': entry
-    }
-
-
-@view_config(route_name='create', renderer="pyramid_scaffold:templates/post.jinja2")
-def new_entry(request):
-    """Will handle the request for the new entry."""
-    return {
-        "title": "New Entry",
-    }
-
-
-@view_config(route_name='update', renderer="pyramid_scaffold:templates/edit.jinja2")
-def edit_entry(request):
-    """Will handle the request for the edit entry."""
-    return {
-        "title": "Edit Entry",
-    }

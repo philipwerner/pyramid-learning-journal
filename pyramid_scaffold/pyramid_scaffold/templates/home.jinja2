@@ -1,0 +1,24 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
+      <div class="post-preview">
+          
+      {% for entry in entries %}
+    
+        <h2>{{ entry.title }}</h2>
+
+        <h3>{{ entry.creation_date }}</h3>
+        <p>{{ entry.body }}</p>
+        <h4><a href="{{ request.route_url('detail', id=entry.id) }}">See Entry</a></h4>
+    
+      {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+{% endblock %}
