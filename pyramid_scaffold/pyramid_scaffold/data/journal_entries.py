@@ -1,3 +1,5 @@
+"""."""
+
 POSTS = [
     {'id': 2, 'entry_title': 'Day 2', 'body': "I feel a lot better after today, very relieved that I was able to get everything I missed yesterday. It was also very nice to get my Sublime set up properly and the virtualenv running and know how to use them. Much better day today. The assignment was fun, pretty straight forward, really happy to be focusing on writing tests, all my dev friends tell me that they are a big part of getting a job, so.....YESS!", 'creation_date': 'Tuesday, 17 October, 2017, 10:23 pm'},
     {'id': 3, 'entry_title': 'Day 3', 'body': "So far so good, my head isn't spinning yet. Everything is making so much more sense than JS and that makes me happy. The complexity of using the terminal/command line is a bit intimidating, but I haven't really had any hangups at this point. Really excited about all of this.", 'creation_date': 'Thursday, 19 October, 2017, 4:11 pm'},

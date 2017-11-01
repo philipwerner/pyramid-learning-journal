@@ -2,6 +2,7 @@
 """Handles formatting inputs for jinja pages."""
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPNotFound
+from pyramid_scaffold.models import Posts
 
 POSTS = [
     {'id': 2, 'entry_title': 'Day 2', 'body': "I feel a lot better after today, very relieved that I was able to get everything I missed yesterday. It was also very nice to get my Sublime set up properly and the virtualenv running and know how to use them. Much better day today. The assignment was fun, pretty straight forward, really happy to be focusing on writing tests, all my dev friends tell me that they are a big part of getting a job, so.....YESS!", 'creation_date': 'Tuesday, 17 October, 2017, 10:23 pm'},
@@ -20,8 +21,11 @@ POSTS = [
 @view_config(route_name='list', renderer="pyramid_scaffold:templates/home.jinja2")
 def list_journal(request):
     """Will handle the request for the home page."""
+    posts = request.dbsession.query(Posts).all()
+    posts = [posts.to_dict() for post in posts]
     return {
-        'entries': POSTS
+        "title": "Phil's Blog Posts",
+        "entries": posts
     }
 
 
@@ -29,13 +33,13 @@ def list_journal(request):
 def detailed_journal(request):
     """Will handle the request for detailed entries."""
     post_id = int(request.matchdict['id'])
-    if post_id < 0 or post_id > len(POSTS) - 1:
-        raise HTTPNotFound
-    entry = list(filter(lambda entry: entry['id'] == post_id, POSTS))[0]
-    return {
-        'title': entry_title,
-        'entry': entry
-    }
+    post = request.dbsession.query(Posts).get(post_id)
+    if post:
+        return {
+            'title': 'Blog Post',
+            'post': post.to_dict()
+        }
+    raise HTTPNotFound
 
 
 @view_config(route_name='create', renderer="pyramid_scaffold:templates/post.jinja2")
