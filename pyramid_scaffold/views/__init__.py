@@ -1,5 +1,5 @@
-# """."""
-# from .default import list_view, detail_view, create_view, update_view
+"""."""
+from .default import list_view, detail_view, create_view, update_view
 
 
 # def includeme(config):

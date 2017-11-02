@@ -4,9 +4,10 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-md-10 mx-auto">
-              <h2 class="post-title">{{entry.title}}</h2>
-              <h3 class="post-meta">{{entry.creation_date}}</h3>
-              <p class="post-subtitle">{{entry.body}}</p>
+              <h2 class="post-title">{{ entry.title }}</h2>
+              <h3 class="post-meta">{{ entry.creation_date }}</h3>
+              <p class="post-subtitle">{{ entry.body }}</p>
+              <button type="submit"><a href="{{ request.route_url('update', id=entry.id) }}">Edit</a></button>
             </div>
           </div>
         </div>
