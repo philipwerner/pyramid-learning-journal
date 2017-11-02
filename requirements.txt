@@ -23,7 +23,6 @@ pyramid-ipython==0.2
 pyramid-jinja2==2.7
 pyramid-mako==1.0.2
 pyramid-retry==0.5
--e git+https://github.com/philipwerner/pyramid-learning-journal.git@2101a053d84d8cb0a24c9c77f22e964f529f3a74#egg=pyramid_scaffold
 pyramid-tm==2.2
 repoze.lru==0.7
 simplegeneric==0.8.1
