@@ -1,0 +1,22 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-preview">
+            <a href="post.html">
+              {% for entry in entries %}
+              <h2 class="post-title">{{entry.title}}</h2>
+              <h3 class="post-meta">{{entry.creation_date}}</h3>
+              <p class="post-subtitle">{{entry.body}}</p>
+              {% endfor %}
+            </a>
+
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+{% endblock %}
