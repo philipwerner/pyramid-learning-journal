@@ -1,4 +1,4 @@
-"""Route for files."""
+"""Routes for learning journal."""
 
 
 def includeme(config):
