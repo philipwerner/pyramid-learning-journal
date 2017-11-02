@@ -1,33 +1,38 @@
 Pyramid Scaffold
 ================
 
-Getting Started
----------------
+A simple Pyramid app for listing and displaying learning journal posts.
 
-- Change directory into your newly created project.
+Authors:
 
-    cd pyramid_scaffold
+Philip Werner (philip.r.werner@gmail.com)
 
-- Create a Python virtual environment.
+Website:
 
-    python3 -m venv env
+https://immense-depths-83920.herokuapp.com/
 
-- Upgrade packaging tools.
+Routes:
 
-    env/bin/pip install --upgrade pip setuptools
+/ - the home page and a listing of all journal posts
+/journal/new-entry - to create a new journal entry
+/journal/{id:\d+} - the page for an individual post
+/journal/{id:\d+}/edit - for editing existing journal entries
 
-- Install the project in editable mode with its testing requirements.
+Set Up and Installation:
 
-    env/bin/pip install -e ".[testing]"
+Clone this repository to your local machine.
 
-- Configure the database.
+Once downloaded, cd into the pyramid-leanrning-journal directory.
 
-    env/bin/initialize_pyramid_scaffold_db development.ini
+Begin a new virtual environment with Python 3 and activate it.
 
-- Run your project's tests.
+cd into the pyramid_scaffold directory. It should be at the same level of setup.py
 
-    env/bin/pytest
+pip install this package as well as the testing set of extras into your virtual environment.
 
-- Run your project.
+$ pserve development.ini --reload to serve the application on http://localhost:6543
 
-    env/bin/pserve development.ini
+To Test
+
+If you have the testing extras installed, testing is simple. If you're in the same directory as setup.py type the following:
+$ py.test pyramid_scaffold
