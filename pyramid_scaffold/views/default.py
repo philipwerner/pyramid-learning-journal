@@ -1,7 +1,8 @@
 """Views for the learning journal."""
 from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPNotFound, HTTPBadRequest, HTTPFound
+from pyramid.httpexceptions import HTTPNotFound
 from pyramid_scaffold.models import Entry
+from pyramid_scaffold.data.data import ENTRIES
 import os
 
 
@@ -34,37 +35,21 @@ def detail_view(request):
 
 @view_config(route_name='create', renderer='../templates/new.jinja2')
 def create_view(request):
-    """Create a new post and add it to the database."""
-    if request.method == "GET":
-        return{}
-
-    if request.method == "POST":
-        if not all([field in request.POST for field in ['title', 'body']]):
-            raise HTTPBadRequest
-        new_entry = Entry(
-            title=request.POST['title'],
-            body=request.POST['body'],
-        )
-        request.dbsession.add(new_entry)
-        return HTTPFound(request.route_url('list'))
+    """View config for the new post view."""
+    return{
+        "page_title": "Create New Entry"
+    }
 
 
 @view_config(route_name='update', renderer='../templates/edit.jinja2')
 def update_view(request):
-    """View and edit an existing entry and update the database."""
+    """View config for the edit post view."""
     entry_id = int(request.matchdict['id'])
-    entry = request.dbsession.query(Entry).get(entry_id)
-    if not entry:
-        raise HTTPNotFound
-
-    if request.method == "GET":
-        return {
-            'page_title': 'Edit Entry',
-            'entry': entry.to_dict()
-        }
-
-    if request.method == "POST":
-        entry.title = request.POST['title']
-        entry.body = request.POST['body']
-        request.dbsession.flush()
-        return HTTPFound(request.route_url('detail', id=entry.id))
+    for entry in ENTRIES:
+        if entry['id'] == entry_id:
+            hero_title = "Edit Entry"
+            return {
+                "page_title": hero_title,
+                "entry": entry
+            }
+    raise HTTPNotFound()
