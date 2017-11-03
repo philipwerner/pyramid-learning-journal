@@ -15,7 +15,11 @@ from ..models import (
     get_session_factory,
     get_tm_session,
     )
-from ..models import MyModel
+from ..models import Entry
+from datetime import datetime
+from pyramid_scaffold.data.data import ENTRIES
+
+FMT = '%m/%d/%Y'
 
 
 def usage(argv):
@@ -32,8 +36,10 @@ def main(argv=sys.argv):
     options = parse_vars(argv[2:])
     setup_logging(config_uri)
     settings = get_appsettings(config_uri, options=options)
+    settings['sqlalchemy.url'] = os.environ['DATABASE_URL']
 
     engine = get_engine(settings)
+    Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 
     session_factory = get_session_factory(engine)
@@ -41,5 +47,15 @@ def main(argv=sys.argv):
     with transaction.manager:
         dbsession = get_tm_session(session_factory, transaction.manager)
 
-        model = MyModel(name='one', value=1)
-        dbsession.add(model)
+        all_entries = []
+        for entry in ENTRIES:
+            all_entries.append(
+                Entry(
+                    id=entry['id'],
+                    title=entry['title'],
+                    body=entry['body'],
+                    creation_date=entry['creation_date']
+                )
+            )
+
+        dbsession.add_all(all_entries)
