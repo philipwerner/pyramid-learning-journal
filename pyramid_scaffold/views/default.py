@@ -11,10 +11,10 @@ HERE = os.path.dirname(__file__)
 @view_config(route_name='list', renderer='../templates/index.jinja2')
 def list_view(request):
     """View for the listing of all journal entries."""
-    print(ENTRIES)
+    new_entries = reversed(ENTRIES)
     return {
         "page_title": "Phil's Learning Journal",
-        "entries": ENTRIES,
+        "entries": new_entries,
     }
 
 
@@ -22,10 +22,13 @@ def list_view(request):
 def detail_view(request):
     """View config for the detailed view page."""
     the_id = int(request.matchdict['id'])
+
     for entry in ENTRIES:
         if entry['id'] == the_id:
+            hero_title = "Journal Post"
             title = "Phil\'s Blog - {}".format(entry["title"])
             return {
+                "page_title": hero_title,
                 "entry": entry,
                 "title": title,
             }
@@ -46,8 +49,9 @@ def update_view(request):
     entry_id = int(request.matchdict['id'])
     for entry in ENTRIES:
         if entry['id'] == entry_id:
+            hero_title = "Edit Entry"
             return {
-                "page_title": "Edit Entry",
+                "page_title": hero_title,
                 "entry": entry
             }
     raise HTTPNotFound()

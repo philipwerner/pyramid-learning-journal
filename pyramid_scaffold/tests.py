@@ -85,8 +85,8 @@ def test_layout_root(testapp):
 
 
 def test_root_contents(testapp):
-    """Test that the contents of the root page contains as many <article> tags as entries."""
+    """Test that the contents of the root page contains as many <h3> tags as entries."""
     from pyramid_scaffold.data.data import ENTRIES
     response = testapp.get('/', status=200)
     html = response.html
-    assert len(ENTRIES) == len(html.findAll("post-title"))
+    assert len(ENTRIES) == len(html.findAll("h3"))
