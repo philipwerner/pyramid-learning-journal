@@ -1,94 +1,92 @@
 """Tests for learning journal app."""
-
+from pyramid_scaffold.data.data import ENTRIES
 from pyramid.testing import DummyRequest
 from pyramid import testing
 from pyramid.response import Response
+import pytest
 
 
-def test_list_view_returns_response_object():
-    """Will test for a response object."""
-    from pyramid_scaffold.views import list_view
-    req = DummyRequest()
+def test_list_view_returns_dict():
+    """Will test that a dict is returned from the list view."""
+    from pyramid_scaffold.views.default import list_view
+    req = testing.DummyRequest()
     response = list_view(req)
-    assert isinstance(response, Response)
+    assert isinstance(response, dict)
 
 
-def test_list_view_returns_status_200():
-    """Tests for a 200 status."""
-    from pyramid_scaffold.views import list_view
-    req = DummyRequest()
-    response = list_view(req)
-    assert response.status_code == 200
-
-
-def test_list_view_content_is_correct():
+def test_list_view_returns_proper_amount_of_content():
     """Tests for proper content on homepage."""
-    from pyramid_scaffold.views import list_view
-    req = DummyRequest()
+    from pyramid_scaffold.views.default import list_view
+    req = testing.DummyRequest()
     response = list_view(req)
-    assert "Phil's Blog" in response.text
+    assert len(response['entries']) == len(ENTRIES)
 
 
-def test_detail_view_returns_response_object():
-    """Tests for proper content on detail page."""
-    from pyramid_scaffold.views import detail_view
-    req = DummyRequest()
-    response = detail_view(req)
-    assert isinstance(response, Response)
+def test_detail_view():
+    """Test that the view returns a dictionary of values."""
+    from pyramid_scaffold.views.default import detail_view
+    req = testing.DummyRequest()
+    req.matchdict['id'] = 5
+    info = detail_view(req)
+    assert isinstance(info, dict)
 
 
-def test_detail_view_returns_status_200():
-    """Tests for a 200 response from the detail page."""
-    from pyramid_scaffold.views import detail_view
-    req = DummyRequest()
-    response = detail_view(req)
-    assert response.status_code == 200
+def test_detail_view_response_contains_entry_attr():
+    """Test that the view returns one entry."""
+    from pyramid_scaffold.views.default import detail_view
+    req = testing.DummyRequest()
+    req.matchdict['id'] = 5
+    info = detail_view(req)
+    for key in ["id", "title", "body", "creation_date"]:
+        assert key in info["entry"]
 
 
-def test_detail_view_content_is_correct():
-    """Tests for proper content on the detail page."""
-    from pyramid_scaffold.views import detail_view
-    req = DummyRequest()
-    response = detail_view(req)
-    assert "Man must explore, and this is exploration at its greatest" in response.text
+def test_update_view():
+    """Test that the view returns a dictionary of values."""
+    from pyramid_scaffold.views.default import update_view
+    req = testing.DummyRequest()
+    req.matchdict['id'] = 5
+    info = update_view(req)
+    assert isinstance(info, dict)
 
 
-def test_create_view_returns_response_object():
-    """Tests for a 200 response frome the create page."""
-    from pyramid_scaffold.views import create_view
-    req = DummyRequest()
-    response = create_view(req)
-    assert isinstance(response, Response)
+def test_update_view_response_contains_entry_attr():
+    """Test that the view returns one entry."""
+    from pyramid_scaffold.views.default import update_view
+    req = testing.DummyRequest()
+    req.matchdict['id'] = 5
+    info = update_view(req)
+    for key in ["id", "title", "body", "creation_date"]:
+        assert key in info["entry"]
 
 
+@pytest.fixture()
+def testapp():
+    """Create and instance of our app for testing."""
+    from webtest import TestApp
+    from pyramid.config import Configurator
 
-def test_create_view_content_is_correct():
-    """Tests for proper content on create page."""
-    from pyramid_scaffold.views import create_view
-    req = DummyRequest()
-    response = create_view(req)
-    assert "New Article" in response.text
+    def main():
+        config = Configurator()
+        config.include('pyramid_jinja2')
+        config.include('.routes')
+        config.scan()
+        return config.make_wsgi_app()
 
-
-def test_update_view_returns_response_object():
-    """Tests for a response object from the update/edit page."""
-    from pyramid_scaffold.views import update_view
-    req = DummyRequest()
-    response = update_view(req)
-    assert isinstance(response, Response)
-
-
-def test_update_view_returns_status_200():
-    """Tests for a 200 response from the update/edit page."""
-    from pyramid_scaffold.views import update_view
-    req = DummyRequest()
-    response = update_view(req)
-    assert response.status_code == 200
+    app = main()
+    return TestApp(app)
 
 
-def test_update_view_content_is_correct():
-    """Tests for proper content from the update/edit page."""
-    from pyramid_scaffold.views import update_view
-    req = DummyRequest()
-    response = update_view(req)
-    assert "Edit Entry" in response.text
+def test_layout_root(testapp):
+    """Test that the contents of the root page contains <article>."""
+    response = testapp.get('/', status=200)
+    html = response.html
+    assert 'Philip Werner 2017' in html.find("footer").text
+
+
+def test_root_contents(testapp):
+    """Test that the contents of the root page contains as many <h3> tags as entries."""
+    from pyramid_scaffold.data.data import ENTRIES
+    response = testapp.get('/', status=200)
+    html = response.html
+    assert len(ENTRIES) == len(html.findAll("h3"))

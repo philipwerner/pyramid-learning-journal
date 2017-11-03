@@ -15,9 +15,10 @@ https://immense-depths-83920.herokuapp.com/
 Routes:
 
 / - the home page and a listing of all journal posts
-/journal/new-entry - to create a new journal entry
+/create - to create a new journal entry
 /journal/{id:\d+} - the page for an individual post
 /journal/{id:\d+}/edit - for editing existing journal entries
+
 
 Set Up and Installation:
 
