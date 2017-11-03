@@ -19,7 +19,7 @@ def test_list_view_returns_proper_amount_of_content():
     from pyramid_scaffold.views.default import list_view
     req = testing.DummyRequest()
     response = list_view(req)
-    assert len(response['entries']) == len(ENTRIES)
+    assert len(response['new_entries']) == len(ENTRIES)
 
 
 def test_detail_view():
@@ -39,6 +39,16 @@ def test_detail_view_response_contains_entry_attr():
     info = detail_view(req)
     for key in ["id", "title", "body", "creation_date"]:
         assert key in info["entry"]
+
+
+def test_detail_page_http_not_found():
+    """Test that a HTTPNotFound is raised."""
+    from pyramid.httpexceptions import HTTPNotFound
+    from pyramid_scaffold.views.default import detail_view
+    req = testing.DummyRequest()
+    req.matchdict['id'] = 100
+    with pytest.raises(HTTPNotFound):
+        detail_view(req)
 
 
 def test_update_view():
