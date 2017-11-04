@@ -22,6 +22,7 @@ requires = [
     'transaction',
     'zope.sqlalchemy',
     'waitress',
+    'psycopg2',
 ]
 
 tests_require = [
@@ -58,7 +59,7 @@ setup(
             'main = pyramid_scaffold:main',
         ],
         'console_scripts': [
-            'initialize_pyramid_scaffold_db = pyramid_scaffold.scripts.initializedb:main',
+            'initdb = pyramid_scaffold.scripts.initializedb:main',
         ],
     },
 )
