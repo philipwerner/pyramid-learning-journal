@@ -1,102 +1,98 @@
 """Tests for learning journal app."""
-from pyramid_scaffold.data.data import ENTRIES
+from pyramid_scaffold.models import Entry, get_tm_session
+from pyramid_scaffold.models.meta import Base
 from pyramid.testing import DummyRequest
+from datetime import datetime
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound
 from pyramid import testing
-from pyramid.response import Response
 import pytest
+import transaction
 
 
-def test_list_view_returns_dict():
-    """Will test that a dict is returned from the list view."""
+@pytest.fixture
+def configuration(request):
+    """Set up an instance of the configurator."""
+    config = testing.setUp(settings={
+        'sqlalchemy.url': 'postgres://localhost:5432/pyramid_scaffold'
+    })
+    config.include("pyramid_scaffold.models")
+    config.include("pyramid_scaffold.routes")
+
+    def teardown():
+        testing.tearDown()
+
+    request.addfinalizer(teardown)
+    return config
+
+
+@pytest.fixture
+def db_session(configuration, request):
+    """Create a database session."""
+    session_factory = configuration.registry["dbsession_factory"]
+    session = session_factory()
+    engine = session.bind
+    Base.metadata.create_all(engine)
+
+    def teardown():
+        session.transaction.rollback()
+        Base.metadata.drop_all(engine)
+
+    request.addfinalizer(teardown)
+    return session
+
+
+@pytest.fixture
+def dummy_request(db_session):
+    """Fake HTTP Request."""
+    return testing.DummyRequest(dbsession=db_session)
+
+
+def test_list_view_returns_list_of_entries_in_dict(dummy_request):
+    """Will test that a list containing the entries is returned."""
     from pyramid_scaffold.views.default import list_view
-    req = testing.DummyRequest()
-    response = list_view(req)
-    assert isinstance(response, dict)
+    response = list_view(dummy_request)
+    assert isinstance(response['entries'], list)
 
 
-def test_list_view_returns_proper_amount_of_content():
-    """Tests for proper content on homepage."""
+def test_entry_exists_and_is_in_list(dummy_request):
+    """Test that an entry is in the list."""
     from pyramid_scaffold.views.default import list_view
-    req = testing.DummyRequest()
-    response = list_view(req)
-    assert len(response['new_entries']) == len(ENTRIES)
+    new_entry = Entry(
+        title='Test title',
+        body='Test body.',
+        creation_date=datetime.now()
+    )
+    dummy_request.dbsession.add(new_entry)
+    dummy_request.dbsession.commit()
+    response = list_view(dummy_request)
+    assert new_entry.to_dict() in response['entries']
 
 
-def test_detail_view():
-    """Test that the view returns a dictionary of values."""
+def test_detail_view_shows_entry_detail(dummy_request):
+    """Test that the detail view displays the entry details."""
     from pyramid_scaffold.views.default import detail_view
-    req = testing.DummyRequest()
-    req.matchdict['id'] = 5
-    info = detail_view(req)
-    assert isinstance(info, dict)
+    new_entry = Entry(
+        title='Test title',
+        body='Test body.',
+        creation_date=datetime.now()
+    )
+    dummy_request.dbsession.add(new_entry)
+    dummy_request.dbsession.commit()
+    dummy_request.matchdict['id'] = 1
+    response = detail_view(dummy_request)
+    assert response['entry'] == new_entry.to_dict()
 
 
-def test_detail_view_response_contains_entry_attr():
-    """Test that the view returns one entry."""
+def test_detail_view_non_existent_entry(dummy_request):
+    """Test non existent entry raises HTTPNotFound error."""
     from pyramid_scaffold.views.default import detail_view
-    req = testing.DummyRequest()
-    req.matchdict['id'] = 5
-    info = detail_view(req)
-    for key in ["id", "title", "body", "creation_date"]:
-        assert key in info["entry"]
-
-
-def test_detail_page_http_not_found():
-    """Test that a HTTPNotFound is raised."""
-    from pyramid.httpexceptions import HTTPNotFound
-    from pyramid_scaffold.views.default import detail_view
-    req = testing.DummyRequest()
-    req.matchdict['id'] = 100
+    new_entry = Entry(
+        title='Test title',
+        body='Test body.',
+        creation_date=datetime.now()
+    )
+    dummy_request.dbsession.add(new_entry)
+    dummy_request.dbsession.commit()
+    dummy_request.matchdict['id'] = 2
     with pytest.raises(HTTPNotFound):
-        detail_view(req)
-
-
-def test_update_view():
-    """Test that the view returns a dictionary of values."""
-    from pyramid_scaffold.views.default import update_view
-    req = testing.DummyRequest()
-    req.matchdict['id'] = 5
-    info = update_view(req)
-    assert isinstance(info, dict)
-
-
-def test_update_view_response_contains_entry_attr():
-    """Test that the view returns one entry."""
-    from pyramid_scaffold.views.default import update_view
-    req = testing.DummyRequest()
-    req.matchdict['id'] = 5
-    info = update_view(req)
-    for key in ["id", "title", "body", "creation_date"]:
-        assert key in info["entry"]
-
-
-@pytest.fixture()
-def testapp():
-    """Create and instance of our app for testing."""
-    from webtest import TestApp
-    from pyramid.config import Configurator
-
-    def main():
-        config = Configurator()
-        config.include('pyramid_jinja2')
-        config.include('.routes')
-        config.scan()
-        return config.make_wsgi_app()
-
-    app = main()
-    return TestApp(app)
-
-
-def test_layout_root(testapp):
-    """Test that the contents of the root page contains <article>."""
-    response = testapp.get('/', status=200)
-    html = response.html
-    assert 'Philip Werner 2017' in html.find("footer").text
-
-
-def test_root_contents(testapp):
-    """Test that the contents of the root page contains as many <h3> tags as entries."""
-    from pyramid_scaffold.data.data import ENTRIES
-    response = testapp.get('/', status=200)
-    html = response.html
-    assert len(ENTRIES) == len(html.findAll("h3"))
+        detail_view(dummy_request)
