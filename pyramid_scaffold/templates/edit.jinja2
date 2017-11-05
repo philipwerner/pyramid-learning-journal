@@ -1,0 +1,36 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+    <header class="masthead" style="background-image: url('../../static/img/seatown.jpg')">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="site-heading">
+              <h1>{{ page_title }}</h1>
+              <span class="subheading"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <main class="clearfix">
+            <section id="write" class="tab-content">
+              <form action="#" id="new-form">
+                <label>
+                <textarea id="article-title" rows="1">{{ entry.title }}</textarea>
+                </label>
+                <textarea id="article-body" rows="8" cols="40" required>{{ entry.body }}</textarea>
+                <button type="submit" value="Edit Entry">Submit</button>
+              </form>
+            </section>
+            <section id="articles" class="tab-content">
+            </section>
+          </main>
+        </div>
+      </div>
+    </div>
+{% endblock %}
