@@ -20,6 +20,7 @@
               <h3 class="post-meta">{{ entry.creation_date }}</h3>
               <p class="post-subtitle">{{ entry.body }}</p>
               <button type="submit"><a href="{{ request.route_url('update', id=entry.id) }}">Edit</a></button>
+              <button type="submit" class="delete"><a href="{{ request.route_url('delete', id=entry.id) }}">Delete</a></button>
             </div>
           </div>
         </div>
