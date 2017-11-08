@@ -20,11 +20,11 @@
           <main class="clearfix">
             <section id="write" class="tab-content">
               <h1>New Article</h1>
-              <form action="#" id="new-form">
+              <form action="#" id="new-form" method='POST'>
                 <label>
-                <input type="text" id="article-title" placeholder="Article title" required>
+                <input type="text" id="article-title" name ="title" placeholder="Article title" required>
                 </label>
-                <textarea id="article-body" rows="8" cols="40" required></textarea>
+                <textarea id="article-body" name="body" rows="8" cols="40" required></textarea>
                 <button type="submit">Submit</button>
               </form>
             </section>

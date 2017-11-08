@@ -4,11 +4,10 @@ from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
 from pyramid_scaffold.models import Entry
 
 
-
 @view_config(route_name='list', renderer='templates/index.jinja2')
 def list_view(request):
     """View for the listing of all journal entries."""
-    entries = request.dbsession.query(Entry).all()
+    entries = request.dbsession.query(Entry).order_by(Entry.creation_date.desc).all()
     entries = [entry.to_dict() for entry in entries]
     return {
         "page_title": "Phil's Learning Journal",
@@ -65,7 +64,7 @@ def update_view(request):
         entry.body = request.POST['body']
         request.dbsession.add(entry)
         request.dbsession.flush()
-        return HTTPFound(request.route_url('list'))
+        return HTTPFound(request.route_url('detail'))
 
 
 @view_config(route_name='delete')
