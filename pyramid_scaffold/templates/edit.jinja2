@@ -19,9 +19,9 @@
         <div class="col-lg-8 col-md-10 mx-auto">
           <main class="clearfix">
             <section id="write" class="tab-content">
-              <form action="#" id="new-form" method='POST'>
+              <form id="new-form" method="POST">
                 <label>
-                <textarea id="article-title" name="title" rows="1">{{ entry.title }}</textarea>
+                <input type="text" id="article-title" name="title" rows="1" value="{{ entry.title }}"/>
                 </label>
                 <textarea id="article-body" name="body" rows="8" cols="40" required>{{ entry.body }}</textarea>
                 <button type="submit" value="Edit Entry">Submit</button>
