@@ -1,13 +1,14 @@
 """Views for the learning journal."""
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
+from pyramid_scaffold.security import is_authenticated
+from pyramid.security import remember, forget
 from pyramid_scaffold.models import Entry
 
 
 @view_config(route_name='list', renderer='templates/index.jinja2')
 def list_view(request):
     """View for the listing of all journal entries."""
-
     entries = request.dbsession.query(Entry).order_by(Entry.creation_date.desc()).all()
     entries = [entry.to_dict() for entry in entries]
     return {
@@ -29,7 +30,11 @@ def detail_view(request):
     raise HTTPNotFound()
 
 
-@view_config(route_name='create', renderer='templates/new.jinja2')
+@view_config(
+    route_name='create',
+    renderer='templates/new.jinja2',
+    permission='secret'
+)
 def create_view(request):
     """Create a new post and add it to the database."""
     if request.method == "GET":
@@ -48,7 +53,11 @@ def create_view(request):
         return HTTPFound(request.route_url('list'))
 
 
-@view_config(route_name='update', renderer='templates/edit.jinja2')
+@view_config(
+    route_name='update',
+    renderer='templates/edit.jinja2',
+    permission='secret'
+)
 def update_view(request):
     """View and edit an existing entry and update the database."""
     entry_id = int(request.matchdict['id'])
@@ -79,3 +88,26 @@ def delete_view(request):
         raise HTTPNotFound
     request.dbsession.delete(entry)
     return HTTPFound(request.route_url('list'))
+
+
+@view_config(route_name='login', renderer='templates/login.jinja2')
+def login(request):
+    """Will control log in to the journal."""
+    if request.authenticated_userid:
+        return HTTPFound(request.route_url('home'))
+    if request.method == "GET":
+        return {}
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        if is_authenticated(username, password):
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('list'), headers=headers)
+        return {}
+
+
+@view_config(route_name='logout')
+def logout(request):
+    """Let the user logout."""
+    headers = forget(request)
+    return HTTPFound(request.route_url('list'), headers =headers)
