@@ -18,7 +18,7 @@ class Entry(Base):
     body = Column(Unicode)
     creation_date = Column(DateTime)
 
-    def __init(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Modify the init method to do new things."""
         super(Entry, self).__init__(*args, **kwargs)
         self.creation_date = datetime.now()
