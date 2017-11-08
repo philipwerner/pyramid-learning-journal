@@ -13,7 +13,7 @@ import transaction
 def configuration(request):
     """Set up an instance of the configurator."""
     config = testing.setUp(settings={
-        'sqlalchemy.url': 'postgres://localhost:5432/pyramid_scaffold'
+        'sqlalchemy.url': 'postgres://localhost:5432/test_pyramid_scaffold'
     })
     config.include("pyramid_scaffold.models")
     config.include("pyramid_scaffold.routes")
@@ -47,8 +47,21 @@ def dummy_request(db_session):
     return testing.DummyRequest(dbsession=db_session)
 
 
-def test_list_view_returns_list_of_entries_in_dict(dummy_request):
-    """Will test that a list containing the entries is returned."""
+@pytest.fixture
+def new_entry(db_session):
+    """Make a new entry in the database."""
+    new_entry = Entry(
+        title='Test title',
+        body='Test body.',
+        creation_date=datetime.now()
+    )
+    dummy_request.dbsession.add(new_entry)
+    dummy_request.dbsession.commit()
+    return new_entry
+
+
+def test_list_view_returns_a_list(dummy_request):
+    """Will test that a list is returned."""
     from pyramid_scaffold.views.default import list_view
     response = list_view(dummy_request)
     assert isinstance(response['entries'], list)
@@ -83,16 +96,9 @@ def test_detail_view_shows_entry_detail(dummy_request):
     assert response['entry'] == new_entry.to_dict()
 
 
-def test_detail_view_non_existent_entry(dummy_request):
+def test_detail_view_non_existent_entry(dummy_request, new_dict):
     """Test non existent entry raises HTTPNotFound error."""
     from pyramid_scaffold.views.default import detail_view
-    new_entry = Entry(
-        title='Test title',
-        body='Test body.',
-        creation_date=datetime.now()
-    )
-    dummy_request.dbsession.add(new_entry)
-    dummy_request.dbsession.commit()
     dummy_request.matchdict['id'] = 2
     with pytest.raises(HTTPNotFound):
         detail_view(dummy_request)
@@ -135,6 +141,26 @@ def test_create_view_incomplete_data_placeholder_text(dummy_request):
     dummy_request.POST = entry_info
     with pytest.raises(HTTPBadRequest):
         create_view(dummy_request)
+
+
+def test_update_view_works(dummy_request, new_entry):
+    """Test the update view returns a dict."""
+    from pyramid_scaffold.views.default import update_view
+    dummy_request.matchdict['id'] = 1
+    response = update_view(dummy_request)
+    assert isinstance(response, dict)
+
+
+def test_update_view_updates_entry(dummy_request, new_entry):
+    """."""
+    from pyramid_scaffold.views.default import update_view
+    new_info = {'title': 'New Title', 'body': 'New Body'}
+    dummy_request.matchdict['id'] = 1
+    dummy_request.method = "POST"
+    dummy_request.POST = new_info
+    update_view(dummy_request)
+    entry = dummy_request.dbsession.query(Entry).get(1)
+    assert entry.title == 'New Title'
 
 
 @pytest.fixture(scope="session")
