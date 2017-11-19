@@ -12,5 +12,6 @@ def main(global_config, **settings):
     config.include('.models')
     config.include('.routes')
     config.add_static_view(name='static', path='pyramid_scaffold:static')
+    config.include('.security')
     config.scan()
     return config.make_wsgi_app()
