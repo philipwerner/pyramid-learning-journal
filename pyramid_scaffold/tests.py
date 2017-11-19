@@ -1,12 +1,8 @@
 """Tests for learning journal app."""
-from pyramid_scaffold.models import Entry, get_tm_session
-from pyramid_scaffold.models.meta import Base
-from pyramid.testing import DummyRequest
+from pyramid_scaffold.models import Entry
 from datetime import datetime
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
-from pyramid import testing
 import pytest
-import transaction
 
 
 def test_home_route_get_request_is_200_ok(testapp):
@@ -17,7 +13,26 @@ def test_home_route_get_request_is_200_ok(testapp):
 
 def test_home_route_get_no_entries_has_no_h2_tags(testapp):
     """Test there are no h2 tags when no entries available."""
-    
+    response = testapp.get('/')
+    html = response.html
+    content = html.find_all('article')[0]
+    assert content.findChildren()
+
+
+def test_home_route_get_with_one_entry_has_one_section(testapp, one_db_entry):
+    """Test that a single entry is being returned to the home view."""
+    response = testapp.get('/')
+    html = response.html
+    entries = html.find_all('article')
+    assert len(entries) == 1
+
+
+def test_home_route_get_with_entries_has_many_sections(testapp, fill_the_db):
+    """Test that the entries are being returned to the home view."""
+    response = testapp.get('/')
+    html = response.html
+    entries = html.find_all('article')
+    assert len(entries) == 20
 
 
 def test_list_view_returns_a_list(dummy_request):
@@ -121,54 +136,6 @@ def test_update_view_updates_entry(dummy_request, new_entry):
     update_view(dummy_request)
     entry = dummy_request.dbsession.query(Entry).get(1)
     assert entry.title == 'New Title'
-
-
-@pytest.fixture(scope="session")
-def testapp(request):
-    """Test app for learning journal tests."""
-    from webtest import TestApp
-    from pyramid.config import Configurator
-
-    def main():
-        settings = {
-            'sqlalchemy.url': 'postgres://localhost:5432/test_pyramid_scaffold'
-        }
-        config = Configurator(settings=settings)
-        config.include('pyramid_jinja2')
-        config.include('pyramid_scaffold.routes')
-        config.include('pyramid_scaffold.models')
-        config.scan()
-        return config.make_wsgi_app()
-
-    app = main()
-
-    session_factory = app.registry["dbsession_factory"]
-    engine = session_factory().bind
-    Base.metadata.create_all(bind=engine)
-
-    def tearDown():
-        Base.metadata.drop_all(bind=engine)
-
-    request.addfinalizer(tearDown)
-
-    return TestApp(app)
-
-
-@pytest.fixture(scope="session")
-def fill_the_db(testapp):
-    """Fill the db for the testapp."""
-    session_factory = testapp.app.registry["dbsession_factory"]
-    with transaction.manager:
-        dbsession = get_tm_session(session_factory, transaction.manager)
-        dbsession.add_all(ENTRIES)
-
-ENTRIES = []
-for i in range(1, 20):
-    new_entry = Entry(
-        title='Test Journal {}'.format(i),
-        body='Test body'
-    )
-    ENTRIES.append(new_entry)
 
 
 def test_delete_has_deleted_data(testapp, fill_the_db):
