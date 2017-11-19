@@ -19,6 +19,9 @@
         <div class="col-lg-8 col-md-10 mx-auto">
           <main class="clearfix">
             <section id="write" class="tab-content">
+              {% if error %}
+              <p style="color: red">{{ error }}</p>
+              {% endif %}
                 <form method="POST">
                     <table>
                         <tr>

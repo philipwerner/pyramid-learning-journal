@@ -9,55 +9,15 @@ import pytest
 import transaction
 
 
-@pytest.fixture
-def configuration(request):
-    """Set up an instance of the configurator."""
-    config = testing.setUp(settings={
-        'sqlalchemy.url': 'postgres://localhost:5432/test_pyramid_scaffold'
-    })
-    config.include("pyramid_scaffold.models")
-    config.include("pyramid_scaffold.routes")
-
-    def teardown():
-        testing.tearDown()
-
-    request.addfinalizer(teardown)
-    return config
+def test_home_route_get_request_is_200_ok(testapp):
+    """Test for status 200 ok."""
+    response = testapp.get('/')
+    assert response.status_code == 200
 
 
-@pytest.fixture
-def db_session(configuration, request):
-    """Create a database session."""
-    session_factory = configuration.registry["dbsession_factory"]
-    session = session_factory()
-    engine = session.bind
-    Base.metadata.create_all(engine)
-
-    def teardown():
-        session.transaction.rollback()
-        Base.metadata.drop_all(engine)
-
-    request.addfinalizer(teardown)
-    return session
-
-
-@pytest.fixture
-def dummy_request(db_session):
-    """Fake HTTP Request."""
-    return testing.DummyRequest(dbsession=db_session)
-
-
-@pytest.fixture
-def new_entry(db_session):
-    """Make a new entry in the database."""
-    new_entry = Entry(
-        title='Test title',
-        body='Test body.',
-        creation_date=datetime.now()
-    )
-    dummy_request.dbsession.add(new_entry)
-    dummy_request.dbsession.commit()
-    return new_entry
+def test_home_route_get_no_entries_has_no_h2_tags(testapp):
+    """Test there are no h2 tags when no entries available."""
+    
 
 
 def test_list_view_returns_a_list(dummy_request):
@@ -171,7 +131,7 @@ def testapp(request):
 
     def main():
         settings = {
-            'sqlalchemy.url': 'postgres://localhost:5432/pyramid_scaffold'
+            'sqlalchemy.url': 'postgres://localhost:5432/test_pyramid_scaffold'
         }
         config = Configurator(settings=settings)
         config.include('pyramid_jinja2')

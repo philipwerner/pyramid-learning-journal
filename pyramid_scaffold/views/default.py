@@ -103,11 +103,13 @@ def login(request):
         if is_authenticated(username, password):
             headers = remember(request, username)
             return HTTPFound(request.route_url('list'), headers=headers)
-        return {}
+        return {
+            'error': 'Username/password combination was bad.'
+        }
 
 
 @view_config(route_name='logout')
 def logout(request):
     """Let the user logout."""
     headers = forget(request)
-    return HTTPFound(request.route_url('list'), headers =headers)
+    return HTTPFound(request.route_url('list'), headers=headers)
