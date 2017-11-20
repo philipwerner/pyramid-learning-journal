@@ -26,6 +26,7 @@
                 <input type="text" id="article-title" name="title" placeholder="Article title" required>
                 </label>
                 <textarea id="article-body" name="body" rows="8" cols="40" required></textarea>
+                <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}" />
                 <button type="submit">Submit</button>
               </form>
             </section>

@@ -6,7 +6,7 @@ from pyramid.security import remember, forget
 from pyramid_scaffold.models import Entry
 
 
-@view_config(route_name='list', renderer='templates/index.jinja2')
+@view_config(route_name='list', renderer='templates/index.jinja2', require_csrf=False)
 def list_view(request):
     """View for the listing of all journal entries."""
     entries = request.dbsession.query(Entry).order_by(Entry.creation_date.desc()).all()
@@ -17,7 +17,7 @@ def list_view(request):
     }
 
 
-@view_config(route_name='detail', renderer='templates/detail.jinja2')
+@view_config(route_name='detail', renderer='templates/detail.jinja2', require_csrf=False)
 def detail_view(request):
     """View config for the detailed view page."""
     entry_id = int(request.matchdict['id'])
@@ -33,7 +33,8 @@ def detail_view(request):
 @view_config(
     route_name='create',
     renderer='templates/new.jinja2',
-    permission='secret'
+    permission='secret',
+    require_csrf=True
 )
 def create_view(request):
     """Create a new post and add it to the database."""
@@ -56,7 +57,8 @@ def create_view(request):
 @view_config(
     route_name='update',
     renderer='templates/edit.jinja2',
-    permission='secret'
+    permission='secret',
+    require_csrf=True
 )
 def update_view(request):
     """View and edit an existing entry and update the database."""
@@ -79,7 +81,11 @@ def update_view(request):
         return HTTPFound(request.route_url('detail'))
 
 
-@view_config(route_name='delete')
+@view_config(
+    route_name='delete',
+    permission='secret',
+    require_csrf=True
+)
 def delete_view(request):
     """Delete a entry."""
     entry_id = int(request.matchdict['id'])
@@ -90,7 +96,11 @@ def delete_view(request):
     return HTTPFound(request.route_url('list'))
 
 
-@view_config(route_name='login', renderer='templates/login.jinja2')
+@view_config(
+    route_name='login',
+    renderer='templates/login.jinja2',
+    require_csrf=False
+)
 def login(request):
     """Will control log in to the journal."""
     if request.authenticated_userid:

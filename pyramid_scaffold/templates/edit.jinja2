@@ -24,6 +24,7 @@
                 <textarea id="article-title" name="title" rows="1">{{ entry.title }}</textarea>
                 </label>
                 <textarea id="article-body" name="body" rows="8" cols="40" required>{{ entry.body }}</textarea>
+                <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}" />
                 <button type="submit" value="Edit Entry">Submit</button>
               </form>
             </section>
