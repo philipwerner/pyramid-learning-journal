@@ -2,7 +2,7 @@
 import os
 from pyramid.authentication import AuthTktAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
-from pyramid.security import Authenticated
+from pyramid.security import Authenticated, Everyone
 from pyramid.security import Allow
 from pyramid.session import SignedCookieSessionFactory
 from passlib.apps import custom_app_context as pwd_context
@@ -16,29 +16,36 @@ class MyRoot(object):
         self.requset = requset
 
     __acl__ = [
+        (Allow, Everyone, 'view'),
         (Allow, Authenticated, 'secret'),
     ]
 
 
 def is_authenticated(username, password):
     """Check for proper username and password."""
-    if username == os.environ.get('AUTH_USERNAME', ''):
-        if pwd_context.verify(password, os.environ.get('AUTH_PASSWORD', '')):
-            return True
-    return False
+    stored_username = os.environ.get('AUTH_USERNAME', '')
+    stored_password = os.environ.get('AUTH_PASSWORD', '')
+    is_authenticated = False
+    if stored_username and stored_password:
+        if username == stored_username:
+            try:
+                is_authenticated = pwd_context.verify(password, stored_password)
+            except ValueError:
+                pass
+    return is_authenticated
 
 
 def includeme(config):
     """Config for security stuffs."""
-    auth_secret = os.environ.get('AUTH_SECRET', '')
+    auth_secret = os.environ.get('AUTH_SECRET', 'itsaseekrit')
+    session_factory = SignedCookieSessionFactory(auth_secret)
+    config.set_session_factory(session_factory)
+    config.set_default_csrf_options(require_csrf=True)
     authn_policy = AuthTktAuthenticationPolicy(
         secret=auth_secret,
         hashalg='sha512'
     )
-    session_secret = os.environ.get('SESSION_SECRET', 'itsaseekrit')
-    session_factory = SignedCookieSessionFactory(session_secret)
-    config.set_session_factory(session_factory)
-    config.set_default_csrf_options(require_csrf=True)
+    config.set_authentication_policy(authn_policy)
     authz_policy = ACLAuthorizationPolicy()
     config.set_authorization_policy(authz_policy)
     config.set_root_factory(MyRoot)
