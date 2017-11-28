@@ -14,14 +14,6 @@ def test_list_view_returns_dict():
     assert isinstance(response, dict)
 
 
-def test_list_view_returns_proper_amount_of_content():
-    """Tests for proper content on homepage."""
-    from pyramid_scaffold.views.default import list_view
-    req = testing.DummyRequest()
-    response = list_view(req)
-    assert len(response['new_entries']) == len(ENTRIES)
-
-
 def test_detail_view():
     """Test that the view returns a dictionary of values."""
     from pyramid_scaffold.views.default import detail_view
@@ -96,7 +88,6 @@ def test_layout_root(testapp):
 
 def test_root_contents(testapp):
     """Test that the contents of the root page contains as many <h3> tags as entries."""
-    from pyramid_scaffold.data.data import ENTRIES
     response = testapp.get('/', status=200)
     html = response.html
     assert len(ENTRIES) == len(html.findAll("h3"))
