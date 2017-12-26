@@ -1,5 +1,6 @@
 # pyramid-learning-journal
-================
+
+
 Pyramid Scaffold
 ================
 
