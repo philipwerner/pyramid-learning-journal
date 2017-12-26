@@ -152,3 +152,23 @@ def test_create_view_successful_post_redirects_home(testapp):
     }
     response = testapp.post("/create", entry_info)
     assert response.location == 'http://localhost/'
+
+
+def test_403_error_on_new_entry_without_login(testapp_secure):
+    """Test for a 403 status code on new entry view if not logged in."""
+    assert testapp_secure.get('/journal/new-entry', status=403)
+
+
+def test_403_error_on_edit_entry_without_login(testapp_secure, fill_the_db):
+    """Test for a 403 status code on edit entry view if not logged in."""
+    assert testapp_secure.get('/journal/1/edit-entry', status=403)
+
+
+def test_200_ok_on_detail_view_without_login(testapp_secure, fill_the_db):
+    """Test for a 200 status code on detail view if not logged in."""
+    assert testapp_secure.get('/journal/1', status=200)
+
+
+def test_200_ok_on_main_view_without_login(testapp_secure):
+    """Test for a 200 status code on main view if not logged in."""
+    assert testapp_secure.get('/', status=200)

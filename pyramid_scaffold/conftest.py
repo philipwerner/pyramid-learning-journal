@@ -106,3 +106,35 @@ for i in range(1, 20):
         body='Test body'
     )
     ENTRIES.append(new_entry)
+
+
+@pytest.fixture(scope="session")
+def testapp_secure(request):
+    """Test app with security for learning journal tests."""
+    from webtest import TestApp
+    from pyramid.config import Configurator
+
+    def main():
+        settings = {
+            'sqlalchemy.url': 'postgres://localhost:5432/test_pyramid_scaffold'
+        }
+        config = Configurator(settings=settings)
+        config.include('pyramid_jinja2')
+        config.include('learning_journal.routes')
+        config.include('learning_journal.models')
+        config.include("learning_journal.security")
+        config.scan()
+        return config.make_wsgi_app()
+
+    app = main({})
+
+    session_factory = app.registry["dbsession_factory"]
+    engine = session_factory().bind
+    Base.metadata.create_all(bind=engine)
+
+    def tearDown():
+        Base.metadata.drop_all(bind=engine)
+
+    request.addfinalizer(tearDown)
+
+    return TestApp(app)
